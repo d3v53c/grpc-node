@@ -41,6 +41,8 @@ var Metadata = require('./metadata');
 
 var constants = require('./constants');
 
+var utils = require('./utils');
+
 var EventEmitter = require('events').EventEmitter;
 
 var stream = require('stream');
@@ -992,9 +994,7 @@ exports.makeClientConstructor = function(methods, serviceName,
 
   Object.keys(methods).forEach(name => {
     const attrs = methods[name];
-    if (name === '__proto__') {
-      return;
-    }
+    utils.disallowProtoPath(name);
     if (name.indexOf('$') === 0) {
       throw new Error('Method names cannot start with $');
     }
@@ -1014,7 +1014,7 @@ exports.makeClientConstructor = function(methods, serviceName,
     ServiceClient.prototype.$method_names[attrs.path] = name;
     // Associate all provided attributes with the method
     Object.assign(ServiceClient.prototype[name], attrs);
-    if (attrs.originalName && attrs.originalName !== '__proto__') {
+    if (attrs.originalName && !utils.isProtoPath(attrs.originalName)) {
       ServiceClient.prototype[attrs.originalName] =
         ServiceClient.prototype[name];
     }

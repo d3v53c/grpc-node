@@ -15,13 +15,12 @@
  *
  */
 
-import * as assert from 'assert';
+var assert = require('assert')
 
 const grpc = require('../');
 
 describe('loadPackageDefinition', () => {
   it('Should not allow prototype pollution', () => {
-      grpc.loadPackageDefinition({'__proto__.polluted': true});
-      assert.notStrictEqual({}.polluted, true);
+      assert.throws(() => grpc.loadPackageDefinition({'__proto__.polluted': true}));
   });
 });
